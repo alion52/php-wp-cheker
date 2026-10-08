@@ -1,0 +1,15 @@
+# Секреты
+config.php
+.env
+.httpauth
+
+# Логи
+*.log
+bot_log.txt
+bot_errors.log
+email_requests.txt
+
+# Системные
+.DS_Store
+.idea/
+.vscode/

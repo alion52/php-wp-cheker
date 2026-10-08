@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP-WP Cheker — Мониторинг безопасности</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+<!-- Плавающий блок справа -->
+<div class="floating-sidebar">
+    <a href="tel:+375293116611" class="floating-btn floating-btn-phone" title="Позвонить">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/>
+        </svg>
+        <span class="tooltip">+375 (29) 311-66-11</span>
+    </a>
+
+    <a href="mailto:info@example.com" class="floating-btn floating-btn-email" title="Написать">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <path d="M22 6l-10 7L2 6"/>
+        </svg>
+        <span class="tooltip">info@example.com</span>
+    </a>
+
+    <a href="http://t.me/igor_good" target="_blank" class="floating-btn floating-btn-telegram" title="Telegram">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+        </svg>
+        <span class="tooltip">Telegram</span>
+    </a>
+
+    <a href="https://wa.me/79267313545" target="_blank" class="floating-btn floating-btn-whatsapp" title="WhatsApp">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+        </svg>
+        <span class="tooltip">WhatsApp</span>
+    </a>
+
+    <a href="skype:example?chat" target="_blank" class="floating-btn floating-btn-skype" title="Skype">
+        <svg class="icon" viewBox="0 0 24 24">
+            <path d="M12 2a10 10 0 00-8.6 15.1L2 22l5-1.3A10 10 0 1012 2z"/>
+        </svg>
+        <span class="tooltip">Skype</span>
+    </a>
+</div>
+
+<div class="container">
+    <div class="header fade-in">
+        <div class="logo-container">
+            <img src="logo-full.svg" alt="PHP-WP Checker" class="logo-full">
+        </div>
+
+        <div class="site-title">
+            <svg class="icon" viewBox="0 0 24 24">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+            PHP-WP Cheker
+        </div>
+
+        <h1>Мониторинг безопасности</h1>
+        <p class="subtitle">Анализ WordPress и PHP в реальном времени</p>
+
+        <!-- Кнопка Telegram бота в шапке -->
+        <div class="telegram-bot-header">
+            <a href="https://t.me/php_wp_cheker_bot" target="_blank" class="telegram-bot-header-btn">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                </svg>
+                <div class="telegram-bot-header-text">
+                    <span class="telegram-bot-header-title">Проверить сайты в Telegram</span>
+<!--                    <span class="telegram-bot-header-username">@php_wp_cheker_bot</span>-->
+                </div>
+                <svg class="icon icon-sm arrow-icon" viewBox="0 0 24 24">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="status-bar" id="statusBar">
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                WordPress <strong id="wpLatest">Загрузка...</strong>
+            </div>
+            <div class="status-pill">
+                <span class="status-dot"></span>
+                PHP <strong id="phpLatest">Загрузка...</strong>
+            </div>
+        </div>
+        <div class="update-info" id="updateInfo"></div>
+    </div>
+
+    <div class="card fade-in">
+        <div class="card-header">
+            <div class="card-icon">
+                <svg class="icon" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+            </div>
+            <h2>Проверка сайтов</h2>
+
+            <div class="card-actions" id="cardActions" style="display: none;">
+                <button class="btn btn-sm btn-success" id="exportPdfBtn" title="Скачать PDF">
+                    <svg class="icon icon-sm" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                        <path d="M14 2v6h6M12 18v-6M9 15l3 3 3-3"/>
+                    </svg>
+                    <span>Создать PDF</span>
+                </button>
+<!--                <button class="btn btn-sm btn-primary" id="emailBtn" title="Отправить на Email">-->
+<!--                    <svg class="icon icon-sm" viewBox="0 0 24 24">-->
+<!--                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>-->
+<!--                        <path d="M22 6l-10 7L2 6"/>-->
+<!--                    </svg>-->
+<!--                    <span>Email</span>-->
+<!--                </button>-->
+            </div>
+        </div>
+        <textarea id="urls" placeholder="https://example.com&#10;https://mysite.org&#10;example.net"></textarea>
+        <div class="btn-group">
+            <button class="btn btn-primary" id="checkBtn">
+                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                    <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+                Начать проверку
+            </button>
+            <button class="btn btn-secondary" id="clearBtn">
+                <svg class="icon icon-sm" viewBox="0 0 24 24">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    <path d="M10 11v6M14 11v6"/>
+                </svg>
+                Очистить
+            </button>
+        </div>
+    </div>
+
+    <div id="results"></div>
+
+    <div id="versionInfoBlocks" style="display: none;">
+        <div class="version-info-grid">
+            <div class="version-info-card">
+                <div class="version-info-header">
+                    <div class="version-badge-large">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/>
+                            <path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="version-title">WordPress</div>
+                        <div class="version-number" id="wpVersionNumber"></div>
+                    </div>
+                </div>
+                <div id="wordpressInfo"></div>
+            </div>
+
+            <div class="version-info-card">
+                <div class="version-info-header">
+                    <div class="version-badge-large">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M8 9l-3 3 3 3M16 9l3 3-3 3M13 5l-2 14"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="version-title">PHP</div>
+                        <div class="version-number" id="phpVersionNumber"></div>
+                    </div>
+                </div>
+                <div id="phpInfo"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="emailModal">
+    <div class="modal">
+        <h3>Отправить отчет на Email</h3>
+        <input type="email" id="emailInput" placeholder="Введите email адрес">
+        <div class="btn-group">
+            <button class="btn btn-primary" id="sendEmailBtn">Отправить</button>
+            <button class="btn btn-secondary" id="cancelEmailBtn">Отмена</button>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

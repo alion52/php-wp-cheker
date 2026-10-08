@@ -1,0 +1,9 @@
+{
+    "name": "alion52/php-wp-cheker",
+    "description": "WordPress security scanner with Telegram bot",
+    "type": "project",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0"
+    }
+}
